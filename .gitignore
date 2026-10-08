@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+backend/venv/
+__pycache__/
+*.pyc
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+firmware/esp32_gridguard_main/secrets.h
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.clangd/
+
+# Next.js build
+.next/
+out/
+build/
+dist/
+
+# Logs & temp
+*.log
+.DS_Store
+Thumbs.db

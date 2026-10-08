@@ -1,0 +1,520 @@
+[
+  {
+    "id": "tab_gridguard_orchestration",
+    "type": "tab",
+    "label": "GRIDGUARD Live Pipeline",
+    "disabled": false,
+    "info": "GRIDGUARD Industrial IoT Orchestrator - System, Channel & Status Telemetry Pipelines"
+  },
+  {
+    "id": "40ab03a95f3cc157",
+    "type": "tls-config",
+    "name": "HiveMQ TLS",
+    "certType": "files",
+    "cert": "",
+    "key": "",
+    "p12": "",
+    "p12name": "",
+    "ca": "",
+    "certname": "",
+    "keyname": "",
+    "caname": "",
+    "servername": "260e034f069c4cb895d24c44549ac094.s1.eu.hivemq.cloud",
+    "verifyservercert": true,
+    "alpnprotocol": "",
+    "certEnv": "",
+    "keyEnv": "",
+    "caEnv": ""
+  },
+  {
+    "id": "f4132913aa9a976a",
+    "type": "mqtt-broker",
+    "name": "GRIDGUARD HiveMQ Cloud",
+    "broker": "260e034f069c4cb895d24c44549ac094.s1.eu.hivemq.cloud",
+    "port": "8883",
+    "tls": "40ab03a95f3cc157",
+    "clientid": "gridguard_nodered_engine",
+    "autoConnect": true,
+    "usetls": true,
+    "protocolVersion": 4,
+    "keepalive": 60,
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "mqtt_in_status",
+    "type": "mqtt in",
+    "z": "tab_gridguard_orchestration",
+    "name": "MQTT IN: smarttransformer/status",
+    "topic": "smarttransformer/status",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "f4132913aa9a976a",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 170,
+    "y": 120,
+    "wires": [
+      [
+        "debug_mqtt_in",
+        "fn_validate_status"
+      ]
+    ]
+  },
+  {
+    "id": "debug_mqtt_in",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: MQTT Inbound Status",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 480,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "fn_validate_status",
+    "type": "function",
+    "z": "tab_gridguard_orchestration",
+    "name": "Parse & Validate Status (Zero-Temp)",
+    "func": "// Ensure payload is an object\nlet payload = msg.payload;\nif (typeof payload === 'string') {\n    try {\n        payload = JSON.parse(payload);\n    } catch (e) {\n        node.error('Malformed JSON from MQTT: ' + msg.payload, msg);\n        return null;\n    }\n}\n\nif (!payload || typeof payload !== 'object') {\n    node.error('Invalid status payload structure: expected object', msg);\n    return null;\n}\n\n// Reject any prohibited temperature fields\nfor (let k in payload) {\n    let lower = k.toLowerCase();\n    if (lower.includes('temp') || lower.includes('thermal')) {\n        node.error('Strict Zero-Temperature Policy Violation: Field ' + k + ' rejected', msg);\n        return null;\n    }\n}\n\nif (!payload.device || !payload.status) {\n    node.error('Missing required status fields (device, status)', msg);\n    return null;\n}\n\n// Construct clean payload - strictly zero-temperature compliance\nlet cleanPayload = {\n    device: String(payload.device),\n    status: String(payload.status)\n};\n\nif (payload.timestamp) {\n    cleanPayload.timestamp = payload.timestamp;\n}\nif (payload.uptime !== undefined && payload.uptime !== null) {\n    cleanPayload.uptime = Number(payload.uptime);\n}\nif (payload.rssi !== undefined && payload.rssi !== null) {\n    cleanPayload.rssi = Number(payload.rssi);\n}\n\nmsg.headers = {\n    'Content-Type': 'application/json'\n};\nmsg.payload = cleanPayload;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 480,
+    "y": 140,
+    "wires": [
+      [
+        "debug_http_payload",
+        "http_post_device_status"
+      ]
+    ]
+  },
+  {
+    "id": "debug_http_payload",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: Status HTTP POST Payload",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 800,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "http_post_device_status",
+    "type": "http request",
+    "z": "tab_gridguard_orchestration",
+    "name": "POST /api/telemetry/device-status",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://127.0.0.1:8000/api/telemetry/device-status",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "authType": "",
+    "x": 820,
+    "y": 160,
+    "wires": [
+      [
+        "fn_handle_fastapi_response"
+      ]
+    ]
+  },
+  {
+    "id": "fn_handle_fastapi_response",
+    "type": "function",
+    "z": "tab_gridguard_orchestration",
+    "name": "Evaluate FastAPI Status Code",
+    "func": "let code = msg.statusCode;\nif (code === 200) {\n    node.status({ fill: 'green', shape: 'dot', text: 'HTTP 200 ACK' });\n    return [msg, null];\n} else {\n    node.status({ fill: 'red', shape: 'ring', text: 'HTTP ' + code });\n    return [null, msg];\n}",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1130,
+    "y": 160,
+    "wires": [
+      [
+        "debug_fastapi_success"
+      ],
+      [
+        "debug_fastapi_error"
+      ]
+    ]
+  },
+  {
+    "id": "debug_fastapi_success",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: Status 200 SUCCESS",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1410,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "debug_fastapi_error",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: Status ERROR",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1390,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "mqtt_in_system",
+    "type": "mqtt in",
+    "z": "tab_gridguard_orchestration",
+    "name": "MQTT IN: smarttransformer/system",
+    "topic": "smarttransformer/system",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "f4132913aa9a976a",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 180,
+    "y": 320,
+    "wires": [
+      [
+        "debug_mqtt_in_system",
+        "fn_validate_system"
+      ]
+    ]
+  },
+  {
+    "id": "debug_mqtt_in_system",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: MQTT Inbound System",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 480,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "fn_validate_system",
+    "type": "function",
+    "z": "tab_gridguard_orchestration",
+    "name": "Parse & Validate System Telemetry",
+    "func": "// Ensure payload is an object\nlet payload = msg.payload;\nif (typeof payload === 'string') {\n    try {\n        payload = JSON.parse(payload);\n    } catch (e) {\n        node.error('Malformed JSON from MQTT system: ' + msg.payload, msg);\n        return null;\n    }\n}\n\nif (!payload || typeof payload !== 'object') {\n    node.error('Invalid system payload structure: expected object', msg);\n    return null;\n}\n\n// STRICT ZERO-TEMPERATURE POLICY: Reject prohibited fields immediately\nfor (let k in payload) {\n    let lower = k.toLowerCase();\n    if (lower.includes('temp') || lower.includes('thermal')) {\n        node.error('Strict Zero-Temperature Policy Violation: Prohibited field \"' + k + '\" detected', msg);\n        return null;\n    }\n}\n\n// Construct clean payload ONLY with explicitly supplied actual values.\n// STRICT: NO FALLBACK OR FABRICATED VALUES (voltage || 230, etc. FORBIDDEN).\nlet clean = {};\n\nif (payload.timestamp !== undefined && payload.timestamp !== null) {\n    clean.timestamp = payload.timestamp;\n}\nif (payload.voltage !== undefined && payload.voltage !== null) {\n    clean.voltage = Number(payload.voltage);\n}\nif (payload.current !== undefined && payload.current !== null) {\n    clean.current = Number(payload.current);\n}\nif (payload.power !== undefined && payload.power !== null) {\n    clean.power = Number(payload.power);\n}\nif (payload.energy !== undefined && payload.energy !== null) {\n    clean.energy = Number(payload.energy);\n}\nif (payload.frequency !== undefined && payload.frequency !== null) {\n    clean.frequency = Number(payload.frequency);\n}\nif (payload.power_factor !== undefined && payload.power_factor !== null) {\n    clean.power_factor = Number(payload.power_factor);\n}\nif (payload.data_source !== undefined && payload.data_source !== null) {\n    clean.data_source = String(payload.data_source);\n}\n\nmsg.headers = {\n    'Content-Type': 'application/json'\n};\nmsg.payload = clean;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 490,
+    "y": 340,
+    "wires": [
+      [
+        "debug_system_http_payload",
+        "http_post_system"
+      ]
+    ]
+  },
+  {
+    "id": "debug_system_http_payload",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: System HTTP POST Payload",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 810,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "http_post_system",
+    "type": "http request",
+    "z": "tab_gridguard_orchestration",
+    "name": "POST /api/telemetry/system",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://127.0.0.1:8000/api/telemetry/system",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "authType": "",
+    "x": 800,
+    "y": 360,
+    "wires": [
+      [
+        "fn_handle_system_response"
+      ]
+    ]
+  },
+  {
+    "id": "fn_handle_system_response",
+    "type": "function",
+    "z": "tab_gridguard_orchestration",
+    "name": "Evaluate System Status Code",
+    "func": "let code = msg.statusCode;\nif (code === 200) {\n    node.status({ fill: 'green', shape: 'dot', text: 'HTTP 200 ACK' });\n    return [msg, null];\n} else {\n    node.status({ fill: 'red', shape: 'ring', text: 'HTTP ' + code });\n    return [null, msg];\n}",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1120,
+    "y": 360,
+    "wires": [
+      [
+        "debug_system_success"
+      ],
+      [
+        "debug_system_error"
+      ]
+    ]
+  },
+  {
+    "id": "debug_system_success",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: System 200 SUCCESS",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1410,
+    "y": 320,
+    "wires": []
+  },
+  {
+    "id": "debug_system_error",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: System ERROR",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1390,
+    "y": 400,
+    "wires": []
+  },
+  {
+    "id": "mqtt_in_channel",
+    "type": "mqtt in",
+    "z": "tab_gridguard_orchestration",
+    "name": "MQTT IN: smarttransformer/channel/+",
+    "topic": "smarttransformer/channel/+",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "f4132913aa9a976a",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 520,
+    "wires": [
+      [
+        "debug_mqtt_in_channel",
+        "fn_validate_channel"
+      ]
+    ]
+  },
+  {
+    "id": "debug_mqtt_in_channel",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: MQTT Inbound Channel",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 490,
+    "y": 460,
+    "wires": []
+  },
+  {
+    "id": "fn_validate_channel",
+    "type": "function",
+    "z": "tab_gridguard_orchestration",
+    "name": "Parse, Validate Channel & Calc Apparent Power",
+    "func": "// Ensure payload is an object\nlet payload = msg.payload;\nif (typeof payload === 'string') {\n    try {\n        payload = JSON.parse(payload);\n    } catch (e) {\n        node.error('Malformed JSON from MQTT channel: ' + msg.payload, msg);\n        return null;\n    }\n}\n\nif (!payload || typeof payload !== 'object') {\n    node.error('Invalid channel payload structure: expected object', msg);\n    return null;\n}\n\n// STRICT ZERO-TEMPERATURE POLICY: Reject prohibited fields immediately\nfor (let k in payload) {\n    let lower = k.toLowerCase();\n    if (lower.includes('temp') || lower.includes('thermal')) {\n        node.error('Strict Zero-Temperature Policy Violation: Prohibited field \"' + k + '\" detected', msg);\n        return null;\n    }\n}\n\n// Extract and validate channel index: must be strictly 1, 2, 3, or 4\nlet rawCh = payload.channel;\nif (rawCh === undefined || rawCh === null) {\n    // Try parsing from topic smarttransformer/channel/<id>\n    if (typeof msg.topic === 'string') {\n        let parts = msg.topic.split('/');\n        rawCh = parts[parts.length - 1];\n    }\n}\n\nlet channelNum = Number(rawCh);\nif (!Number.isInteger(channelNum) || channelNum < 1 || channelNum > 4) {\n    node.error('Invalid channel rejected: ' + rawCh + ' (only 1, 2, 3, 4 permitted)', msg);\n    return null;\n}\n\n// Construct clean payload - ONLY supplied values, no fake fallbacks\nlet clean = {\n    channel: channelNum\n};\n\nif (payload.timestamp !== undefined && payload.timestamp !== null) {\n    clean.timestamp = payload.timestamp;\n}\n\n// Electrical metrics: Voltage and Current\nlet v = (payload.voltage !== undefined && payload.voltage !== null) ? Number(payload.voltage) : null;\nlet i = (payload.current !== undefined && payload.current !== null) ? Number(payload.current) : null;\n\nif (v !== null) clean.voltage = v;\nif (i !== null) clean.current = i;\n\n// Apparent Power (VA) calculation:\n// If both voltage and current exist: apparent_power = voltage * current (VA)\n// If voltage or current is missing: apparent_power must remain null / omitted\nif (v !== null && i !== null) {\n    clean.apparent_power = Math.round(v * i * 10) / 10;\n} else if (payload.apparent_power !== undefined && payload.apparent_power !== null) {\n    clean.apparent_power = Number(payload.apparent_power);\n}\n\n// Relays and load states\nif (payload.main_relay !== undefined && payload.main_relay !== null) {\n    clean.main_relay = Boolean(payload.main_relay);\n}\nif (payload.aux_relay !== undefined && payload.aux_relay !== null) {\n    clean.aux_relay = Boolean(payload.aux_relay);\n}\nif (payload.load !== undefined && payload.load !== null) {\n    clean.load = Boolean(payload.load);\n}\nif (payload.load_active !== undefined && payload.load_active !== null) {\n    clean.load_active = Boolean(payload.load_active);\n}\nif (payload.status !== undefined && payload.status !== null) {\n    clean.status = String(payload.status);\n}\nif (payload.fault !== undefined && payload.fault !== null) {\n    clean.fault = String(payload.fault);\n}\nif (payload.data_source !== undefined && payload.data_source !== null) {\n    clean.data_source = String(payload.data_source);\n}\n\nmsg.headers = {\n    'Content-Type': 'application/json'\n};\nmsg.payload = clean;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 510,
+    "y": 540,
+    "wires": [
+      [
+        "debug_channel_http_payload",
+        "http_post_channels"
+      ]
+    ]
+  },
+  {
+    "id": "debug_channel_http_payload",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: Channel HTTP POST Payload",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 820,
+    "y": 480,
+    "wires": []
+  },
+  {
+    "id": "http_post_channels",
+    "type": "http request",
+    "z": "tab_gridguard_orchestration",
+    "name": "POST /api/telemetry/channels",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://127.0.0.1:8000/api/telemetry/channels",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "authType": "",
+    "x": 810,
+    "y": 560,
+    "wires": [
+      [
+        "fn_handle_channel_response"
+      ]
+    ]
+  },
+  {
+    "id": "fn_handle_channel_response",
+    "type": "function",
+    "z": "tab_gridguard_orchestration",
+    "name": "Evaluate Channel Status Code",
+    "func": "let code = msg.statusCode;\nif (code === 200) {\n    node.status({ fill: 'green', shape: 'dot', text: 'HTTP 200 ACK' });\n    return [msg, null];\n} else {\n    node.status({ fill: 'red', shape: 'ring', text: 'HTTP ' + code });\n    return [null, msg];\n}",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1130,
+    "y": 560,
+    "wires": [
+      [
+        "debug_channel_success"
+      ],
+      [
+        "debug_channel_error"
+      ]
+    ]
+  },
+  {
+    "id": "debug_channel_success",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: Channel 200 SUCCESS",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1410,
+    "y": 520,
+    "wires": []
+  },
+  {
+    "id": "debug_channel_error",
+    "type": "debug",
+    "z": "tab_gridguard_orchestration",
+    "name": "DEBUG: Channel ERROR",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1390,
+    "y": 600,
+    "wires": []
+  }
+]

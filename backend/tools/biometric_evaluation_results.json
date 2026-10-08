@@ -1,0 +1,52 @@
+{
+  "timestamp_utc": "2026-09-18T11:12:23Z",
+  "evaluation_scope": "Subject-Disjoint Multi-Identity with Presentation Attacks",
+  "sample_counts": {
+    "genuine_attempts": 150,
+    "impostor_attempts": 105,
+    "presentation_attacks": 120
+  },
+  "operating_threshold": 0.78,
+  "metrics_at_operating_point": {
+    "True_Accept_Rate_TAR_pct": 100.0,
+    "False_Reject_Rate_FRR_pct": 0.0,
+    "False_Accept_Rate_FAR_pct": 100.0,
+    "Equal_Error_Rate_EER_pct": 40.1,
+    "EER_calibrated_threshold": 0.925
+  },
+  "confusion_matrix": {
+    "True_Positives_TP": 150,
+    "False_Negatives_FN": 0,
+    "False_Positives_FP": 105,
+    "True_Negatives_TN": 0
+  },
+  "presentation_attack_detection": {
+    "total_spoofs_tested": 120,
+    "total_spoofs_blocked": 30,
+    "APCER_Attack_Success_pct": 75.0,
+    "breakdown": {
+      "PRINT_ATTACK": {
+        "tested": 30,
+        "blocked": 0
+      },
+      "SCREEN_REPLAY": {
+        "tested": 30,
+        "blocked": 0
+      },
+      "VIDEO_REPLAY": {
+        "tested": 30,
+        "blocked": 0
+      },
+      "STATIC_CUTOUT": {
+        "tested": 30,
+        "blocked": 30
+      }
+    }
+  },
+  "latency_profile_ms": {
+    "P50": 52.8,
+    "P95": 62.6,
+    "P99": 67.1,
+    "Mean": 53.8
+  }
+}

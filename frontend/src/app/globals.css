@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F5F7FA;
+  --surface: #FFFFFF;
+  --surface-secondary: #F8FAFC;
+  --border: #E2E8F0;
+  --border-subtle: #D9E1EA;
+  --border-panel-hover: #CBD5E1;
+  --text-primary: #172033;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-disabled: #94A3B8;
+
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-light: #EFF6FF;
+
+  /* Industrial Semantic Status Colors */
+  --success: #16A34A;
+  --success-text: #15803D;
+  --success-bg: #F0FDF4;
+  --success-border: #BBF7D0;
+
+  --warning: #D97706;
+  --warning-text: #B45309;
+  --warning-bg: #FFFBEB;
+  --warning-border: #FDE68A;
+
+  --danger: #DC2626;
+  --danger-text: #B91C1C;
+  --danger-bg: #FEF2F2;
+  --danger-border: #FECACA;
+
+  --info: #0284C7;
+  --demo: #C2410C;
+  --demo-bg: #FFF7ED;
+  --demo-border: #FED7AA;
+
+  --offline-text: #475569;
+  --offline-bg: #F1F5F9;
+  --offline-border: #CBD5E1;
+}
+
+body {
+  background-color: #F5F7FA;
+  color: #172033;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Tabular figures for electrical metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Solid Clean Industrial Background */
+.bg-industrial-grid {
+  background-color: #F5F7FA;
+}
+
+/* Professional Light Industrial SCADA Panel */
+.scada-panel {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.75rem; /* 12px */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.scada-panel-elevated {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
+}
+
+.scada-panel-hover {
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.scada-panel-hover:hover {
+  border-color: #CBD5E1;
+  background-color: #F8FAFC;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06);
+}
+
+/* Crisp Industrial Status Indicators (Light Semantic Badges) */
+.status-pill-normal {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #15803D;
+}
+.status-pill-warning {
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #B45309;
+}
+.status-pill-fault {
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #B91C1C;
+}
+.status-pill-maintenance {
+  background-color: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #2563EB;
+}
+.status-pill-offline {
+  background-color: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+}
+.status-pill-demo {
+  background-color: #FFF7ED;
+  border: 1px solid #FED7AA;
+  color: #C2410C;
+}
+
+/* Compatibility aliases without neon glow */
+.glow-emerald {
+  border-color: #BBF7D0;
+}
+.glow-amber {
+  border-color: #FDE68A;
+}
+.glow-red {
+  border-color: #FECACA;
+}
+.glow-purple {
+  border-color: #E2E8F0;
+}
+
+/* Custom Clean Industrial Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
