@@ -1,0 +1,47 @@
+name: Feature Request
+description: Suggest a new feature or improvement for GridGuard
+title: "[FEAT] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Target Component
+      options:
+        - Backend (FastAPI)
+        - Frontend (Next.js Dashboard)
+        - Firmware (ESP32-S3)
+        - ML / AI Features
+        - Biometric Security
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: Is your feature request related to a problem? What's missing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or improvement you'd like to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative approaches?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any additional context, mockups, or references.

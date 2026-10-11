@@ -1,0 +1,85 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in GridGuard
+title: "[BUG] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug in GridGuard!
+        Please fill in as much detail as possible so we can reproduce and fix the issue.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which part of the system is affected?
+      options:
+        - Backend (FastAPI)
+        - Frontend (Next.js Dashboard)
+        - Firmware (ESP32-S3)
+        - MQTT / Node-RED
+        - ML / AI Features
+        - Biometric Face Auth
+        - Database
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Observe '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide environment details.
+      value: |
+        - OS: [e.g. Windows 11]
+        - Python: [e.g. 3.12.0]
+        - Node.js: [e.g. 20.10.0]
+        - Browser: [e.g. Chrome 120]
+        - ESP32 Firmware Version: [if applicable]
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Stack Trace
+      description: Paste any relevant logs or error output here.
+      render: shell

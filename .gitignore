@@ -1,28 +1,92 @@
-# Dependencies
-node_modules/
-backend/venv/
-__pycache__/
-*.pyc
+# ============================================================
+# GRIDGUARD — .gitignore
+# ============================================================
 
-# Environment & Secrets
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# Virtual environments
+backend/venv/
+.venv/
+venv/
+ENV/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+nosetests.xml
+junit*.xml
+
+# mypy / ruff
+.mypy_cache/
+.ruff_cache/
+
+# ── Node.js / Next.js ────────────────────────────────────────
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+
+# ── Environment & Secrets ────────────────────────────────────
 .env
 .env.local
 .env.*.local
+.env.production
+*.pem
+secrets.h
 firmware/esp32_gridguard_main/secrets.h
 
-# PlatformIO
+# ── PlatformIO / Arduino ─────────────────────────────────────
 .pio/
 .pioenvs/
 .piolibdeps/
 .clangd/
+*.bin
+*.elf
+*.map
 
-# Next.js build
-.next/
-out/
-build/
-dist/
-
-# Logs & temp
-*.log
+# ── IDE & OS ─────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# ── Logs & Temp ──────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+*.swp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Database (local SQLite instance only) ────────────────────
+# Keep gridguard.db tracked for demo/dev use — remove line below to exclude:
+# gridguard.db
