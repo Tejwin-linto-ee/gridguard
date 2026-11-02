@@ -74,6 +74,13 @@ class Settings(BaseModel):
     NODERED_HEALTH_URL: str = os.getenv("NODERED_HEALTH_URL", "http://127.0.0.1:1880/")
 
     # CORS Origins
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "*"]
+    CORS_ORIGINS: List[str] = [
+        o.strip()
+        for o in os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,https://*.vercel.app,*"
+        ).split(",")
+        if o.strip()
+    ]
 
 settings = Settings()

@@ -1,0 +1,37 @@
+services:
+  # ── FastAPI Backend ─────────────────────────────────────────────────────────
+  - type: web
+    name: gridguard-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    rootDir: .
+    envVars:
+      - key: PYTHONPATH
+        value: .
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./gridguard.db
+      - key: DEVICE_MODE
+        value: SIMULATOR
+      - key: DISABLE_SIMULATOR
+        value: "0"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+      - key: MQTT_HOST
+        value: 260e034f069c4cb895d24c44549ac094.s1.eu.hivemq.cloud
+      - key: MQTT_PORT
+        value: "8883"
+      - key: MQTT_TLS
+        value: "true"
+      - key: MQTT_USERNAME
+        value: gridguard_device
+      - key: MQTT_PASSWORD
+        sync: false   # Set this manually in the Render dashboard
+      - key: GEMINI_API_KEY
+        sync: false   # Set this manually in the Render dashboard
+      - key: CORS_ORIGINS
+        value: "*"
