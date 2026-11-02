@@ -145,3 +145,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
+
+/* ── Mobile Sidebar Drawer Animation ── */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+.animate-slide-in-left {
+  animation: slide-in-left 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ── Responsive grid helpers ── */
+.mobile-grid-1 { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+@media (min-width: 640px)  { .mobile-grid-1 { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+@media (min-width: 1024px) { .mobile-grid-1 { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
+

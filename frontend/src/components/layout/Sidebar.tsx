@@ -7,7 +7,7 @@ import { useSystemHealth } from "@/context/SystemHealthContext";
 import {
   ShieldAlert, LayoutDashboard, Activity, Cpu, AlertTriangle, BarChart3,
   Sliders, Bot, TrendingUp, Wrench, Bell, HeartPulse, Settings, Users,
-  ClipboardList, PlayCircle, LogOut, Radio, Timer, History
+  ClipboardList, PlayCircle, LogOut, Radio, Timer, History, X
 } from "lucide-react";
 
 interface NavItem {
@@ -72,7 +72,7 @@ const NAV_GROUPS: NavGroup[] = [
   }
 ];
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { physicalEsp32, simulator } = useSystemHealth();
 
@@ -91,21 +91,33 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-64 bg-white border-r border-[#E2E8F0] flex flex-col h-screen select-none shrink-0 sticky top-0 z-30 font-sans">
+    <aside className="w-64 bg-white border-r border-[#E2E8F0] flex flex-col h-full select-none shrink-0 z-30 font-sans">
       {/* Platform Branding Header */}
-      <div className="p-4 border-b border-[#E2E8F0] flex items-center gap-3 bg-white">
-        <div className="w-9 h-9 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 shadow-xs">
-          <ShieldAlert className="w-5 h-5 text-white" />
-        </div>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-[#172033] text-base tracking-wider font-mono">GRIDGUARD</span>
-            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
-              PRO
-            </span>
+      <div className="p-4 border-b border-[#E2E8F0] flex items-center justify-between gap-3 bg-white">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 shadow-xs">
+            <ShieldAlert className="w-5 h-5 text-white" />
           </div>
-          <span className="text-[11px] text-[#64748B] truncate font-medium">Smart Transformer Protection</span>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#172033] text-base tracking-wider font-mono">GRIDGUARD</span>
+              <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
+                PRO
+              </span>
+            </div>
+            <span className="text-[11px] text-[#64748B] truncate font-medium">Smart Transformer Protection</span>
+          </div>
         </div>
+        {/* Close button — mobile only */}
+        {onNavigate && (
+          <button
+            onClick={onNavigate}
+            className="lg:hidden p-1.5 rounded-lg text-[#64748B] hover:text-[#172033] hover:bg-slate-100 transition-colors shrink-0"
+            aria-label="Close menu"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Navigation Links Grouped by Operations, Control, Intelligence, System, Administration, Exhibition */}
@@ -123,6 +135,7 @@ export function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={onNavigate}
                   className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors group ${
                     isActive
                       ? "bg-[#EFF6FF] text-[#2563EB] font-semibold border-l-2 border-[#2563EB]"

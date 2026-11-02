@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Bell, PlayCircle, LogOut, Wifi, Server, RefreshCw, Camera, AlertOctagon, User, Info, CheckCircle2, Shield
+  Bell, PlayCircle, LogOut, Wifi, Server, RefreshCw, Camera, AlertOctagon, User, Info, CheckCircle2, Shield, Menu
 } from "lucide-react";
 
 import { useSystemHealth } from "@/context/SystemHealthContext";
@@ -14,6 +14,7 @@ interface TopbarProps {
   dataSource?: string;
   onRefresh?: () => void;
   hasActiveFault?: boolean;
+  onMenuToggle?: () => void;
 }
 
 export function Topbar({
@@ -21,6 +22,7 @@ export function Topbar({
   dataSource,
   onRefresh,
   hasActiveFault = false,
+  onMenuToggle,
 }: TopbarProps) {
   const pathname = usePathname();
   const isDemoRoute = pathname === "/demo";
@@ -46,9 +48,19 @@ export function Topbar({
   };
 
   return (
-    <header className="h-14 bg-white border-b border-[#E2E8F0] px-5 flex items-center justify-between sticky top-0 z-30 shrink-0 font-sans shadow-xs">
+    <header className="h-14 bg-white border-b border-[#E2E8F0] px-3 sm:px-5 flex items-center justify-between sticky top-0 z-30 shrink-0 font-sans shadow-xs">
       {/* Brand & Page Identity */}
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        {/* Hamburger — mobile only */}
+        {onMenuToggle && (
+          <button
+            onClick={onMenuToggle}
+            className="lg:hidden p-1.5 rounded-lg text-[#64748B] hover:text-[#172033] hover:bg-slate-100 transition-colors"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
         <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-xs group-hover:bg-blue-700 transition-colors">
             G
