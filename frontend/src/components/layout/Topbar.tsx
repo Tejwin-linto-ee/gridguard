@@ -302,10 +302,10 @@ export function Topbar({
           )}
         </div>
 
-        {/* Biometric Face Auth Button */}
+        {/* Biometric Face Auth Button — hidden on mobile */}
         <Link
           href="/maintenance"
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border cursor-pointer ${
+          className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border cursor-pointer ${
             hasActiveFault
               ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
               : "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
@@ -315,21 +315,21 @@ export function Topbar({
           {hasActiveFault ? (
             <>
               <AlertOctagon className="w-3.5 h-3.5 text-red-600" />
-              <span>AUTHENTICATE RESET</span>
+              <span className="hidden md:inline">AUTHENTICATE RESET</span>
             </>
           ) : (
             <>
               <Camera className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden sm:inline">FACE AUTH</span>
+              <span className="hidden lg:inline">FACE AUTH</span>
             </>
           )}
         </Link>
 
-        {/* Exhibition Demo Mode Toggle */}
+        {/* Exhibition Demo Mode Toggle — hidden on mobile */}
         {isDemoRoute ? (
           <Link
             href="/"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition-colors"
           >
             <LogOut className="w-3.5 h-3.5 text-red-600" />
             <span className="hidden md:inline">EXIT DEMO</span>
@@ -337,19 +337,19 @@ export function Topbar({
         ) : (
           <Link
             href="/demo"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold transition-colors"
           >
             <PlayCircle className="w-3.5 h-3.5 text-orange-600" />
             <span className="hidden md:inline">EXHIBITION DEMO</span>
           </Link>
         )}
 
-        {/* Telemetry Refresh */}
+        {/* Telemetry Refresh — hidden on mobile */}
         {onRefresh && (
           <button
             onClick={onRefresh}
             title="Refresh Telemetry"
-            className="p-1.5 rounded-lg bg-white hover:bg-slate-50 text-[#64748B] hover:text-[#172033] transition-colors border border-[#CBD5E1] cursor-pointer shadow-2xs"
+            className="hidden sm:block p-1.5 rounded-lg bg-white hover:bg-slate-50 text-[#64748B] hover:text-[#172033] transition-colors border border-[#CBD5E1] cursor-pointer shadow-2xs"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>

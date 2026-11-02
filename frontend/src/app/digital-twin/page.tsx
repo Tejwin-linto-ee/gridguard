@@ -109,83 +109,79 @@ export default function DigitalTwinPage() {
         {/* ============================================================== */}
         {/* SECTION A: HEADER / TITLE / LIVE STATUS / CONTROLS              */}
         {/* ============================================================== */}
-        <div className="bg-white p-5 border border-[#D9E1EA] rounded-xl shadow-xs flex flex-wrap items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest font-mono">
-                GRIDGUARD
-              </span>
-              <span className="text-slate-300">&bull;</span>
-              <h1 className="text-sm font-bold text-[#172033] uppercase tracking-wide font-mono">
-                DIGITAL TWIN / SINGLE-LINE DIAGRAM (SLD)
-              </h1>
-            </div>
-            <p className="text-xs text-[#64748B]">
-              Real-Time Monitoring | Protection | Smart Assistance
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Live Status Badge */}
-            <div className="font-mono text-xs">
-              {isDemoMode ? (
-                <div className="px-3 py-1.5 rounded-lg border bg-purple-50 text-purple-700 border-purple-200 font-bold flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse" />
-                  <span>● DEMONSTRATION MODE (SIMULATED DATA)</span>
-                </div>
-              ) : isStale ? (
-                <div className="px-3 py-1.5 rounded-lg border bg-amber-50 text-amber-800 border-amber-200 font-bold flex items-center gap-2">
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                  <span>⚠ TELEMETRY STALE ({packetAgeSec?.toFixed(0)}s)</span>
-                </div>
-              ) : hasLiveData ? (
-                <div className="px-3 py-1.5 rounded-lg border bg-green-50 text-green-700 border-green-200 font-bold flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-600" />
-                  <span>● LIVE MQTT SYNCHRONIZED</span>
-                </div>
-              ) : (
-                <div className="px-3 py-1.5 rounded-lg border bg-slate-100 text-slate-600 border-slate-200 font-bold flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-slate-400" />
-                  <span>○ NO LIVE DATA (DISCONNECTED)</span>
-                </div>
-              )}
+        <div className="bg-white p-4 border border-[#D9E1EA] rounded-xl shadow-xs">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest font-mono">GRIDGUARD</span>
+                <span className="text-slate-300">&bull;</span>
+                <h1 className="text-sm font-bold text-[#172033] uppercase tracking-wide font-mono">
+                  DIGITAL TWIN / SLD
+                </h1>
+              </div>
+              <p className="text-xs text-[#64748B]">Real-Time Monitoring | Protection | Smart Assistance</p>
             </div>
 
-            {/* Global View Controls */}
-            <div className="flex items-center gap-1.5 font-mono text-xs">
-              <button
-                onClick={handleFitView}
-                className="px-2.5 py-1.5 rounded-lg border border-[#D9E1EA] bg-[#F8FAFC] text-[#172033] hover:bg-slate-100 font-bold flex items-center gap-1.5 transition-colors cursor-pointer text-[11px]"
-                title="Scroll to top-center of Single-Line Diagram"
-              >
-                <Eye className="w-3.5 h-3.5 text-blue-600" />
-                <span>FIT VIEW</span>
-              </button>
-              <button
-                onClick={handleResetView}
-                className="px-2.5 py-1.5 rounded-lg border border-[#D9E1EA] bg-[#F8FAFC] text-[#172033] hover:bg-slate-100 font-bold flex items-center gap-1.5 transition-colors cursor-pointer text-[11px]"
-                title="Reset channel selection and filters"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-slate-600" />
-                <span>RESET VIEW</span>
-              </button>
-              <button
-                onClick={toggleFullscreen}
-                className="px-2.5 py-1.5 rounded-lg border border-[#D9E1EA] bg-[#F8FAFC] text-[#172033] hover:bg-slate-100 font-bold flex items-center gap-1.5 transition-colors cursor-pointer text-[11px]"
-                title="Toggle Fullscreen"
-              >
-                {isFullscreen ? (
-                  <>
-                    <Minimize2 className="w-3.5 h-3.5 text-slate-600" />
-                    <span>EXIT FULLSCREEN</span>
-                  </>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Live Status Badge */}
+              <div className="font-mono text-xs">
+                {isDemoMode ? (
+                  <div className="px-2.5 py-1 rounded-lg border bg-purple-50 text-purple-700 border-purple-200 font-bold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse" />
+                    <span className="hidden sm:inline">DEMONSTRATION MODE</span>
+                    <span className="sm:hidden">DEMO</span>
+                  </div>
+                ) : isStale ? (
+                  <div className="px-2.5 py-1 rounded-lg border bg-amber-50 text-amber-800 border-amber-200 font-bold flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                    <span>STALE ({packetAgeSec?.toFixed(0)}s)</span>
+                  </div>
+                ) : hasLiveData ? (
+                  <div className="px-2.5 py-1 rounded-lg border bg-green-50 text-green-700 border-green-200 font-bold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-green-600" />
+                    <span className="hidden sm:inline">LIVE MQTT SYNC</span>
+                    <span className="sm:hidden">LIVE</span>
+                  </div>
                 ) : (
-                  <>
-                    <Maximize2 className="w-3.5 h-3.5 text-slate-600" />
-                    <span>FULLSCREEN</span>
-                  </>
+                  <div className="px-2.5 py-1 rounded-lg border bg-slate-100 text-slate-600 border-slate-200 font-bold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-slate-400" />
+                    <span className="hidden sm:inline">NO LIVE DATA</span>
+                    <span className="sm:hidden">OFFLINE</span>
+                  </div>
                 )}
-              </button>
+              </div>
+
+              {/* Global View Controls */}
+              <div className="flex items-center gap-1 font-mono text-xs">
+                <button
+                  onClick={handleFitView}
+                  className="px-2 py-1.5 rounded-lg border border-[#D9E1EA] bg-[#F8FAFC] text-[#172033] hover:bg-slate-100 font-bold flex items-center gap-1 transition-colors cursor-pointer text-[11px]"
+                  title="Fit View"
+                >
+                  <Eye className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="hidden sm:inline">FIT VIEW</span>
+                </button>
+                <button
+                  onClick={handleResetView}
+                  className="px-2 py-1.5 rounded-lg border border-[#D9E1EA] bg-[#F8FAFC] text-[#172033] hover:bg-slate-100 font-bold flex items-center gap-1 transition-colors cursor-pointer text-[11px]"
+                  title="Reset View"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-600" />
+                  <span className="hidden sm:inline">RESET VIEW</span>
+                </button>
+                <button
+                  onClick={toggleFullscreen}
+                  className="px-2 py-1.5 rounded-lg border border-[#D9E1EA] bg-[#F8FAFC] text-[#172033] hover:bg-slate-100 font-bold flex items-center gap-1 transition-colors cursor-pointer text-[11px]"
+                  title="Toggle Fullscreen"
+                >
+                  {isFullscreen ? (
+                    <Minimize2 className="w-3.5 h-3.5 text-slate-600" />
+                  ) : (
+                    <Maximize2 className="w-3.5 h-3.5 text-slate-600" />
+                  )}
+                  <span className="hidden sm:inline">{isFullscreen ? "EXIT" : "FULLSCREEN"}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -257,15 +253,20 @@ export default function DigitalTwinPage() {
         {/* ============================================================== */}
         {/* SECTION B: ELECTRICAL SINGLE-LINE DIAGRAM (SLD)                 */}
         {/* ============================================================== */}
-        <FixedSingleLineDiagram
-          system={system}
-          channels={channels}
-          selectedChannels={selectedChannels}
-          onChannelSelect={toggleChannelSelection}
-          onInspectNode={(node) => setInspectedNode(node)}
-          hasLiveData={hasLiveData}
-          packetAgeSec={packetAgeSec}
-        />
+        {/* SLD wrapped in horizontal scroll container for mobile */}
+        <div className="overflow-x-auto rounded-xl -mx-0">
+          <div className="min-w-[640px]">
+            <FixedSingleLineDiagram
+              system={system}
+              channels={channels}
+              selectedChannels={selectedChannels}
+              onChannelSelect={toggleChannelSelection}
+              onInspectNode={(node) => setInspectedNode(node)}
+              hasLiveData={hasLiveData}
+              packetAgeSec={packetAgeSec}
+            />
+          </div>
+        </div>
 
         {/* ============================================================== */}
         {/* SECTION C & D: COMMUNICATION ARCHITECTURE & SYSTEM STATUS       */}
